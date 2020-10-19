@@ -1,0 +1,23 @@
+com:
+  red:
+    one:
+      color:
+        id: 8
+spring:
+  application:
+    name: Pokemon-ETL
+  batch:
+    initialize-schema: ALWAYS
+    job:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+  datasource:
+    url: jdbc:mysql://localhost:6033/pokemon
+    username: root
+    password: root
+feign:
+  hystrix:
+    enabled: false
