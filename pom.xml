@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.red.one</groupId>
-    <artifactId>batch-processing</artifactId>
+    <artifactId>pokemon-processing</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>pokemon-processing</name>
     <description>Pokemon project for ETL to processing data</description>

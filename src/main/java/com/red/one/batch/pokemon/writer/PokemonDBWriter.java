@@ -22,37 +22,40 @@ public class PokemonDBWriter implements ItemWriter<PokemonDetail>{
         for (PokemonDetail item1 : items) {
 
             final String SQL_INSERT_INTO_RESOURCE = "insert into poke_species (created_by, created_date, modified_by, modified_date, color, id_ext, name, url ) " +
-                    "values ('POKE_ETL', CURRENT_TIMESTAMP(), 'POKE_ETL', CURRENT_TIMESTAMP(), 'red', :idExt, :name, :url)";
+                    "values ('POKE_ETL', CURRENT_TIMESTAMP(), 'POKE_ETL', CURRENT_TIMESTAMP(), :color, :idExt, :name, :url)";
 
             final List<MapSqlParameterSource> params = new ArrayList<>();
             for (PokeApiNamedApiResource registration : item1.getPokemon_species()) {
                 MapSqlParameterSource param = new MapSqlParameterSource();
 
-                param.addValue("name", item1.getName());
+                param.addValue("color", item1.getName());
                 param.addValue("idExt", item1.getId());
-                param.addValue("color", registration.getName());
+                param.addValue("name", registration.getName());
                 param.addValue("url", registration.getUrl());
 
                 params.add(param);
             }
             executeInsert(SQL_INSERT_INTO_RESOURCE, params);
 
+
             final String SQL_INSERT_INTO_POKEMON = "insert into poke_character (created_by, created_date, modified_by, " +
-                    "modified_date, base_experience, height, name, species_id, weight) values ('POKE_ETL', CURRENT_TIMESTAMP()," +
-                    " 'POKE_ETL', CURRENT_TIMESTAMP(), :baseExperience, :height, :name, " +
-                    "(SELECT id from poke_species WHERE name= :name), :weight ) ";
+                    "modified_date, base_experience , height, name, species_id, weight) values ('POKE_ETL', CURRENT_TIMESTAMP()," +
+                    " 'POKE_ETL', CURRENT_TIMESTAMP(), :base_experience , :height, :name, " +
+                    " (SELECT id from poke_species WHERE name = :name limit 1) , :weight ) ";
+
+            final List<MapSqlParameterSource> param2s = new ArrayList<>();
             for (PokeApiPokemon item2 : item1.getPokemons()) {
                 MapSqlParameterSource param = new MapSqlParameterSource();
 
-                param.addValue("baseExperience", item1.getName());
-                param.addValue("height", item1.getId());
+                param.addValue("height", item2.getHeight());
                 param.addValue("name", item2.getName());
-                param.addValue("weight", item2.getBase_experience());
+                param.addValue("weight", item2.getWeight());
+                param.addValue("base_experience", item2.getBase_experience());
 
-                params.add(param);
+                param2s.add(param);
 
             }
-            executeInsert(SQL_INSERT_INTO_POKEMON, params);
+            executeInsert(SQL_INSERT_INTO_POKEMON, param2s);
         }
     }
 
