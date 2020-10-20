@@ -3,6 +3,7 @@ package com.red.one.batch.pokemon;
 import com.red.one.batch.pokemon.JobCompletionNotificationListener;
 import com.red.one.batch.pokemon.process.PokemonItemProcessor;
 import com.red.one.batch.pokemon.reader.PokemonApiReader;
+import com.red.one.batch.pokemon.reader.dto.PokemonDetail;
 import com.red.one.batch.pokemon.writer.PokemonDBWriter;
 import com.red.one.batch.pokemon.reader.PokemonExternalApiClient;
 import com.red.one.batch.pokemon.writer.PokeSpecies;
@@ -50,7 +51,7 @@ public class BatchConfiguration {
 	private PokemonExternalApiClient client;
 
 	@Bean
-	public ItemReader<PokeApiSpecies> reader() throws Exception {
+	public ItemReader<PokemonDetail> reader() throws Exception {
 		return new PokemonApiReader(client);
 	}
 
@@ -60,18 +61,8 @@ public class BatchConfiguration {
 	}
 
 	@Bean
-	public ItemWriter<List<PokeSpecies>> writer(DataSource dataSource) {
+	public ItemWriter<PokemonDetail> writer(DataSource dataSource) {
 		return new PokemonDBWriter();
-	}
-	// end::readerwriterprocessor[]
-
-	@Bean(name = "myJobLauncher")
-	public JobLauncher simpleJobLauncher() throws Exception {
-		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-		jobLauncher.setJobRepository(jobRepository);
-		jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
-		jobLauncher.afterPropertiesSet();
-		return jobLauncher;
 	}
 
 	// tag::jobstep[]
@@ -87,9 +78,9 @@ public class BatchConfiguration {
 	}
 
 	@Bean
-	public Step step1(ItemWriter<List<PokeSpecies>> writer) throws Exception {
+	public Step step1(ItemWriter<PokemonDetail> writer) throws Exception {
 		return stepBuilderFactory.get("step1")
-				.<PokeApiSpecies, List<PokeSpecies>> chunk(1)
+				.<PokemonDetail, PokemonDetail> chunk(1)
 				.reader(reader())
 				.processor(processor())
 				.writer(writer)
@@ -97,5 +88,4 @@ public class BatchConfiguration {
 				.allowStartIfComplete(true)
 				.build();
 	}
-	// end::jobstep[]
 }

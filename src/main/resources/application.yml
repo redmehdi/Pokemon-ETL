@@ -2,7 +2,7 @@ com:
   red:
     one:
       color:
-        id: 8
+        id: 9
 spring:
   application:
     name: Pokemon-ETL
